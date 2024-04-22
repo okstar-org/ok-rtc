@@ -46,8 +46,8 @@ endif()
 
 project(ok-rtc
     LANGUAGES C CXX ASM
-    DESCRIPTION "WebRTC build for Telegram"
-    HOMEPAGE_URL "https://github.com/desktop-app/ok-rtc.git"
+    DESCRIPTION "WebRTC build for OkStar"
+    HOMEPAGE_URL "https://github.com/okstar-org/ok-rtc.git"
 )
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ok-rtc)
 
