@@ -1,12 +1,12 @@
 add_library(libwebrtcbuild INTERFACE)
-add_library(tg_owt::libwebrtcbuild ALIAS libwebrtcbuild)
+add_library(ok-rtc::libwebrtcbuild ALIAS libwebrtcbuild)
 
 target_link_libraries(libwebrtcbuild
 INTERFACE
-    tg_owt::libyuv
+    ok-rtc::libyuv
 )
 if (NOT absl_FOUND)
-    target_link_libraries(libwebrtcbuild INTERFACE tg_owt::libabsl)
+    target_link_libraries(libwebrtcbuild INTERFACE ok-rtc::libabsl)
 endif()
 
 target_compile_definitions(libwebrtcbuild
@@ -30,21 +30,21 @@ INTERFACE
     BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0
 )
 
-if (TG_OWT_USE_X11)
+if (OK_RTC_USE_X11)
     target_compile_definitions(libwebrtcbuild
     INTERFACE
         WEBRTC_USE_X11
     )
 endif()
 
-if (TG_OWT_USE_PIPEWIRE)
+if (OK_RTC_USE_PIPEWIRE)
     target_compile_definitions(libwebrtcbuild
     INTERFACE
         WEBRTC_USE_PIPEWIRE
     )
 endif()
 
-if (NOT TG_OWT_BUILD_AUDIO_BACKENDS)
+if (NOT OK_RTC_BUILD_AUDIO_BACKENDS)
     target_compile_definitions(libwebrtcbuild
     INTERFACE
         WEBRTC_DUMMY_AUDIO_BUILD

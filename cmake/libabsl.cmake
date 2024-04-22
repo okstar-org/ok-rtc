@@ -1,11 +1,12 @@
 add_library(libabsl OBJECT EXCLUDE_FROM_ALL)
 init_target(libabsl)
-add_library(tg_owt::libabsl ALIAS libabsl)
+add_library(ok-rtc::libabsl ALIAS libabsl)
 
 set(libabsl_loc ${third_party_loc}/abseil-cpp)
 
 nice_target_sources(libabsl ${libabsl_loc}
 PRIVATE
+    absl/functional/any_invocable.h
     # absl/base/dynamic_annotations.cc
     # absl/base/internal/cycleclock.cc
     # absl/base/internal/exception_safety_testing.cc

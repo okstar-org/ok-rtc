@@ -1,6 +1,6 @@
 add_library(librnnoise OBJECT EXCLUDE_FROM_ALL)
 init_target(librnnoise)
-add_library(tg_owt::librnnoise ALIAS librnnoise)
+add_library(ok-rtc::librnnoise ALIAS librnnoise)
 
 set(librnnoise_loc ${third_party_loc}/rnnoise/src)
 

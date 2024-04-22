@@ -5,37 +5,37 @@ include(CMakeDependentOption)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-set(TG_OWT_SPECIAL_TARGET "" CACHE STRING "Use special platform target, like 'macstore' for Mac App Store.")
+set(OK_RTC_SPECIAL_TARGET "" CACHE STRING "Use special platform target, like 'macstore' for Mac App Store.")
 
-if (NOT TG_OWT_SPECIAL_TARGET STREQUAL "")
-    set(TG_OWT_PACKAGED_BUILD 0)
+if (NOT OK_RTC_SPECIAL_TARGET STREQUAL "")
+    set(OK_RTC_PACKAGED_BUILD 0)
 else()
-    set(TG_OWT_PACKAGED_BUILD 1)
+    set(OK_RTC_PACKAGED_BUILD 1)
 endif()
 
 set(not_packaged_build 0)
-if (NOT TG_OWT_PACKAGED_BUILD)
+if (NOT OK_RTC_PACKAGED_BUILD)
     set(not_packaged_build 1)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13 CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 option(BUILD_SHARED_LIBS "Builds shared libraries instead of static." OFF)
-option(TG_OWT_USE_PROTOBUF "Use protobuf to generate additional headers. Useful for packaged build." ${BUILD_SHARED_LIBS})
-cmake_dependent_option(TG_OWT_USE_X11 "Use X11 for desktop capture." ON "UNIX; NOT APPLE" OFF)
-cmake_dependent_option(TG_OWT_USE_PIPEWIRE "Use pipewire for desktop capture." ON "UNIX; NOT APPLE" OFF)
-cmake_dependent_option(TG_OWT_DLOPEN_PIPEWIRE "dlopen pipewire for desktop capture." ${not_packaged_build} TG_OWT_USE_PIPEWIRE OFF)
-option(TG_OWT_BUILD_AUDIO_BACKENDS "Build webrtc audio backends." OFF)
+option(OK_RTC_USE_PROTOBUF "Use protobuf to generate additional headers. Useful for packaged build." ${BUILD_SHARED_LIBS})
+cmake_dependent_option(OK_RTC_USE_X11 "Use X11 for desktop capture." ON "UNIX; NOT APPLE" OFF)
+cmake_dependent_option(OK_RTC_USE_PIPEWIRE "Use pipewire for desktop capture." ON "UNIX; NOT APPLE" OFF)
+cmake_dependent_option(OK_RTC_DLOPEN_PIPEWIRE "dlopen pipewire for desktop capture." ${not_packaged_build} OK_RTC_USE_PIPEWIRE OFF)
+option(OK_RTC_BUILD_AUDIO_BACKENDS "Build webrtc audio backends." OFF)
 
 if (BUILD_SHARED_LIBS)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     message(WARNING
-        "tg_owt is a fork of Google's webrtc library and is developed by them as a static library without stable ABI in mind."
-        "The feature of building tg_owt as a shared library is community maintained, it may and will break at any time without guarantee to work again."
+        "ok-rtc is a fork of Google's webrtc library and is developed by them as a static library without stable ABI in mind."
+        "The feature of building ok-rtc as a shared library is community maintained, it may and will break at any time without guarantee to work again."
         "Please reconsider your decision. Good luck."
     )
 endif()
 
-if (TG_OWT_BUILD_AUDIO_BACKENDS)
+if (OK_RTC_BUILD_AUDIO_BACKENDS)
     message(WARNING
         "According to upstream WebRTC developers, audio backends for desktop platforms are only for demo purposes."
         "It's not recommended to use them. You've been warned."
@@ -44,19 +44,19 @@ if (TG_OWT_BUILD_AUDIO_BACKENDS)
     )
 endif()
 
-project(tg_owt
+project(ok-rtc
     LANGUAGES C CXX ASM
     DESCRIPTION "WebRTC build for Telegram"
-    HOMEPAGE_URL "https://github.com/desktop-app/tg_owt.git"
+    HOMEPAGE_URL "https://github.com/desktop-app/ok-rtc.git"
 )
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT tg_owt)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ok-rtc)
 
 get_filename_component(webrtc_loc "src" REALPATH)
 set(third_party_loc ${webrtc_loc}/third_party)
 set(tools_loc ${webrtc_loc}/tools)
 
 include(GNUInstallDirs)
-set(webrtc_includedir ${CMAKE_INSTALL_INCLUDEDIR}/tg_owt)
+set(webrtc_includedir ${CMAKE_INSTALL_INCLUDEDIR}/ok-rtc)
 
 if (CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
     set(is_aarch64 1)
@@ -87,28 +87,28 @@ endif()
 
 # Use a separate subdirectory, because it will be exported as an INTERFACE
 # for the generated sources and headers.
-if (TG_OWT_USE_PROTOBUF)
+if (OK_RTC_USE_PROTOBUF)
     add_subdirectory(cmake/protobuf)
 endif()
 
-add_library(tg_owt)
-init_target(tg_owt)
+add_library(ok-rtc)
+init_target(ok-rtc)
 
-if (TG_OWT_USE_PIPEWIRE)
-    if (TG_OWT_DLOPEN_PIPEWIRE)
+if (OK_RTC_USE_PIPEWIRE)
+    if (OK_RTC_DLOPEN_PIPEWIRE)
         include(cmake/generate_stubs.cmake)
         set(stubs_loc ${webrtc_loc}/modules/desktop_capture/linux/wayland)
-        generate_stubs(tg_owt
+        generate_stubs(ok-rtc
             ${stubs_loc}/pipewire_stub_header.fragment
             pipewire_stubs
             ${stubs_loc}/pipewire.sigs
         )
-        target_compile_definitions(tg_owt
+        target_compile_definitions(ok-rtc
         PRIVATE
             WEBRTC_DLOPEN_PIPEWIRE
         )
 
-        target_include_directories(tg_owt
+        target_include_directories(ok-rtc
         PRIVATE
             ${webrtc_loc}/third_party/pipewire/spa/include
             ${webrtc_loc}/third_party/pipewire/src
@@ -116,8 +116,8 @@ if (TG_OWT_USE_PIPEWIRE)
         )
     endif()
 
-    link_glib(tg_owt)
-    link_pipewire(tg_owt ${TG_OWT_DLOPEN_PIPEWIRE})
+    link_glib(ok-rtc)
+    link_pipewire(ok-rtc ${OK_RTC_DLOPEN_PIPEWIRE})
 
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GBM REQUIRED gbm)
@@ -125,7 +125,7 @@ if (TG_OWT_USE_PIPEWIRE)
     pkg_check_modules(GL REQUIRED gl)
     pkg_check_modules(EGL REQUIRED egl)
 
-    target_include_directories(tg_owt SYSTEM
+    target_include_directories(ok-rtc SYSTEM
     PRIVATE
         ${GBM_INCLUDE_DIRS}
         ${DRM_INCLUDE_DIRS}
@@ -134,85 +134,85 @@ if (TG_OWT_USE_PIPEWIRE)
     )
 endif()
 
-set_target_properties(tg_owt PROPERTIES SOVERSION 0 VERSION 0.0.0)
+set_target_properties(ok-rtc PROPERTIES SOVERSION 0 VERSION 0.0.0)
 
-target_link_libraries(tg_owt
+target_link_libraries(ok-rtc
 PRIVATE
-    tg_owt::libpffft
-    tg_owt::librnnoise
-    tg_owt::libsrtp
-    tg_owt::libyuv
+    ok-rtc::libpffft
+    ok-rtc::librnnoise
+    ok-rtc::libsrtp
+    ok-rtc::libyuv
 )
 
 if (is_x86 OR is_x64)
-    target_link_libraries(tg_owt
+    target_link_libraries(ok-rtc
     PRIVATE
-        tg_owt::tg_owt_avx2
-        tg_owt::tg_owt_sse2
+        ok-rtc::ok-rtc_avx2
+        ok-rtc::ok-rtc_sse2
     )
 endif()
 
-if (TG_OWT_USE_PROTOBUF)
-    target_link_libraries(tg_owt
+if (OK_RTC_USE_PROTOBUF)
+    target_link_libraries(ok-rtc
     PRIVATE
-        tg_owt::proto
+        ok-rtc::proto
     )
 endif()
 
-target_sources(tg_owt
+target_sources(ok-rtc
 PRIVATE
     ${libvpx_yasm_objects}
     ${libopenh264_yasm_objects}
 )
 
 if (APPLE)
-    target_link_libraries(tg_owt PUBLIC tg_owt::libsdkmacos)
+    target_link_libraries(ok-rtc PUBLIC ok-rtc::libsdkmacos)
 endif()
 
-link_openssl(tg_owt)
-link_ffmpeg(tg_owt)
-link_opus(tg_owt)
-link_libabsl(tg_owt)
-link_libopenh264(tg_owt)
-link_libvpx(tg_owt)
-link_crc32c(tg_owt)
+link_openssl(ok-rtc)
+link_ffmpeg(ok-rtc)
+link_opus(ok-rtc)
+link_libabsl(ok-rtc)
+link_libopenh264(ok-rtc)
+link_libvpx(ok-rtc)
+link_crc32c(ok-rtc)
 
-if (TG_OWT_BUILD_AUDIO_BACKENDS AND (UNIX AND NOT APPLE))
-    link_libalsa(tg_owt)
-    link_libpulse(tg_owt)
-    link_dl(tg_owt)
+if (OK_RTC_BUILD_AUDIO_BACKENDS AND (UNIX AND NOT APPLE))
+    link_libalsa(ok-rtc)
+    link_libpulse(ok-rtc)
+    link_dl(ok-rtc)
 endif()
 
 include(cmake/libwebrtcbuild.cmake)
-target_link_libraries(tg_owt PUBLIC tg_owt::libwebrtcbuild)
+target_link_libraries(ok-rtc PUBLIC ok-rtc::libwebrtcbuild)
 
-if (TG_OWT_USE_X11)
-    link_x11(tg_owt)
+if (OK_RTC_USE_X11)
+    link_x11(ok-rtc)
 endif()
 
 function(add_sublibrary postfix)
-    add_library(tg_owt_${postfix} OBJECT)
-    init_feature_target(tg_owt_${postfix} ${postfix})
-    add_library(tg_owt::tg_owt_${postfix} ALIAS tg_owt_${postfix})
-    target_link_libraries(tg_owt_${postfix}
+    add_library(ok-rtc_${postfix} OBJECT)
+    init_feature_target(ok-rtc_${postfix} ${postfix})
+    add_library(ok-rtc::ok-rtc_${postfix} ALIAS ok-rtc_${postfix})
+    target_link_libraries(ok-rtc_${postfix}
     PUBLIC
-        tg_owt::libwebrtcbuild
+        ok-rtc::libwebrtcbuild
     )
-    link_libabsl(tg_owt_${postfix})
-    target_include_directories(tg_owt_${postfix}
+    link_libabsl(ok-rtc_${postfix})
+    target_include_directories(ok-rtc_${postfix}
     PUBLIC
         $<BUILD_INTERFACE:${webrtc_loc}>
         $<INSTALL_INTERFACE:${webrtc_includedir}>
     )
     set(sources_list ${ARGV})
     list(REMOVE_AT sources_list 0)
-    nice_target_sources(tg_owt_${postfix} ${webrtc_loc}
+    nice_target_sources(ok-rtc_${postfix} ${webrtc_loc}
     PRIVATE
         ${sources_list}
     )
 endfunction()
 
-nice_target_sources(tg_owt ${webrtc_loc}
+nice_target_sources(ok-rtc ${webrtc_loc}
 PRIVATE
     rtc_base/deprecated/recursive_critical_section.cc
     rtc_base/deprecated/recursive_critical_section.h
@@ -2392,15 +2392,15 @@ if (is_x86 OR is_x64)
     )
 endif()
 
-if (NOT TG_OWT_USE_PROTOBUF)
-    remove_target_sources(tg_owt ${webrtc_loc}
+if (NOT OK_RTC_USE_PROTOBUF)
+    remove_target_sources(ok-rtc ${webrtc_loc}
         logging/rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc
         logging/rtc_event_log/encoder/rtc_event_log_encoder_new_format.cc
     )
 endif()
 
-if (NOT TG_OWT_USE_X11)
-    remove_target_sources(tg_owt ${webrtc_loc}
+if (NOT OK_RTC_USE_X11)
+    remove_target_sources(ok-rtc ${webrtc_loc}
         # src/modules/desktop_capture/BUILD.gn (rtc_use_x11_extensions)
         modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.cc
         modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.h
@@ -2432,8 +2432,8 @@ if (NOT TG_OWT_USE_X11)
     )
 endif()
 
-if (NOT TG_OWT_USE_PIPEWIRE)
-    remove_target_sources(tg_owt ${webrtc_loc}
+if (NOT OK_RTC_USE_PIPEWIRE)
+    remove_target_sources(ok-rtc ${webrtc_loc}
         modules/desktop_capture/linux/wayland/base_capturer_pipewire.cc
         modules/desktop_capture/linux/wayland/base_capturer_pipewire.h
         modules/desktop_capture/linux/wayland/drm.sigs
@@ -2461,8 +2461,8 @@ if (NOT TG_OWT_USE_PIPEWIRE)
     )
 endif()
 
-if (NOT TG_OWT_BUILD_AUDIO_BACKENDS)
-    remove_target_sources(tg_owt ${webrtc_loc}
+if (NOT OK_RTC_BUILD_AUDIO_BACKENDS)
+    remove_target_sources(ok-rtc ${webrtc_loc}
         modules/audio_device/include/audio_device_factory.cc
         modules/audio_device/include/audio_device_factory.h
         modules/audio_device/linux/alsasymboltable_linux.cc
@@ -2499,7 +2499,7 @@ if (NOT TG_OWT_BUILD_AUDIO_BACKENDS)
 endif()
 
 if (NOT WIN32)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         rtc_base/win32.cc
         rtc_base/win32.h
         rtc_base/win32_window.cc
@@ -2513,7 +2513,7 @@ if (NOT WIN32)
 endif()
 
 if (APPLE OR WIN32 OR UNIX)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         modules/desktop_capture/window_capturer_null.cc
         modules/desktop_capture/screen_capturer_null.cc
         modules/desktop_capture/mouse_cursor_monitor_null.cc
@@ -2521,14 +2521,14 @@ if (APPLE OR WIN32 OR UNIX)
 endif()
 
 if (NOT UNIX)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         modules/desktop_capture/screen_drawer_lock_posix.cc
         modules/desktop_capture/screen_drawer_lock_posix.h
     )
 endif()
 
 if ((NOT is_x86) AND (NOT is_x64))
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         common_audio/fir_filter_sse.cc
         common_audio/fir_filter_sse.h
         common_audio/resampler/sinc_resampler_sse.cc
@@ -2540,18 +2540,18 @@ if ((NOT is_x86) AND (NOT is_x64))
 endif()
 
 if (is_aarch64)
-    target_compile_definitions(tg_owt
+    target_compile_definitions(ok-rtc
     PRIVATE
         WEBRTC_ARCH_ARM64
     )
 elseif (is_arm)
-    target_compile_definitions(tg_owt
+    target_compile_definitions(ok-rtc
     PRIVATE
         WEBRTC_ARCH_ARM
     )
 
     if (is_arm7 OR is_arm8)
-        target_compile_definitions(tg_owt
+        target_compile_definitions(ok-rtc
         PRIVATE
             WEBRTC_ARCH_ARM_V7
         )
@@ -2559,12 +2559,12 @@ elseif (is_arm)
 endif()
 
 if (arm_use_neon)
-    target_compile_definitions(tg_owt
+    target_compile_definitions(ok-rtc
     PRIVATE
         WEBRTC_HAS_NEON
     )
 else()
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         common_audio/fir_filter_neon.cc
         common_audio/fir_filter_neon.h
         common_audio/resampler/sinc_resampler_neon.cc
@@ -2584,14 +2584,14 @@ else()
 endif()
 
 if (APPLE)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         rtc_base/socket.cc
         rtc_base/socket.h
         modules/audio_coding/codecs/isac/empty.cc
         modules/remote_bitrate_estimator/test/bwe_test_logging.cc
     )
 else()
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         rtc_base/task_queue_gcd.cc
         rtc_base/task_queue_gcd.h
         rtc_base/mac_ifaddrs_converter.cc
@@ -2605,7 +2605,7 @@ else()
 endif()
 
 if (WIN32 OR APPLE)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         rtc_base/task_queue_stdlib.cc
         rtc_base/task_queue_stdlib.h
         api/task_queue/default_task_queue_factory_stdlib.cc
@@ -2613,7 +2613,7 @@ if (WIN32 OR APPLE)
 endif()
 
 if (WIN32)
-    remove_target_sources(tg_owt ${webrtc_loc}
+    remove_target_sources(ok-rtc ${webrtc_loc}
         rtc_base/ifaddrs_converter.cc
     )
 endif()
@@ -2625,17 +2625,17 @@ if (APPLE)
     )
 endif()
 
-set(tg_owt_export tg_owt)
+set(ok-rtc_export ok-rtc)
 if (is_x86 OR is_x64)
-    set(tg_owt_export
-        tg_owt
-        tg_owt_avx2
-        tg_owt_sse2
+    set(ok-rtc_export
+        ok-rtc
+        ok-rtc_avx2
+        ok-rtc_sse2
     )
 endif()
 
 set(export_targets
-    ${tg_owt_export}
+    ${ok-rtc_export}
     libpffft
     librnnoise
     libsrtp
@@ -2643,7 +2643,7 @@ set(export_targets
     libyuv
     ${platform_export}
 )
-if (TG_OWT_USE_PROTOBUF)
+if (OK_RTC_USE_PROTOBUF)
     list(APPEND export_targets proto)
 endif()
 
@@ -2659,17 +2659,17 @@ endif()
 
 export(
     TARGETS ${export_targets}
-    NAMESPACE tg_owt::
-    FILE "${CMAKE_CURRENT_BINARY_DIR}/tg_owtTargets.cmake"
+    NAMESPACE ok-rtc::
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/ok-rtcTargets.cmake"
 )
 
 configure_file(
-    "cmake/tg_owtConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/tg_owtConfig.cmake"
+    "cmake/ok-rtcConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/ok-rtcConfig.cmake"
     @ONLY
 )
 
-target_include_directories(tg_owt
+target_include_directories(ok-rtc
 PUBLIC
     $<BUILD_INTERFACE:${webrtc_loc}>
     $<INSTALL_INTERFACE:${webrtc_includedir}>
@@ -2677,7 +2677,7 @@ PUBLIC
 
 install(
     TARGETS ${export_targets}
-    EXPORT tg_owtTargets
+    EXPORT ok-rtcTargets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
@@ -2689,12 +2689,12 @@ install(
 )
 
 install(
-    EXPORT tg_owtTargets
-    NAMESPACE tg_owt::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tg_owt
+    EXPORT ok-rtcTargets
+    NAMESPACE ok-rtc::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ok-rtc
 )
 
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/tg_owtConfig.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tg_owt
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/ok-rtcConfig.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ok-rtc
 )

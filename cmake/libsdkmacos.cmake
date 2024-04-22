@@ -1,12 +1,12 @@
 add_library(libsdkmacos OBJECT)
 init_target(libsdkmacos)
-add_library(tg_owt::libsdkmacos ALIAS libsdkmacos)
+add_library(ok-rtc::libsdkmacos ALIAS libsdkmacos)
 
 set(libsdkmacos_loc ${webrtc_loc}/sdk/objc)
 
 target_link_libraries(libsdkmacos
 PRIVATE
-    tg_owt::libwebrtcbuild
+    ok-rtc::libwebrtcbuild
 )
 
 nice_target_sources(libsdkmacos ${libsdkmacos_loc}

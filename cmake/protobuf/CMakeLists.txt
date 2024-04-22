@@ -2,7 +2,7 @@ find_package(Protobuf REQUIRED)
 
 add_library(proto OBJECT)
 init_target(proto)
-add_library(tg_owt::proto ALIAS proto)
+add_library(ok-rtc::proto ALIAS proto)
 
 target_compile_definitions(proto
 PRIVATE

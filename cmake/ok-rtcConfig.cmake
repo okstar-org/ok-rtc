@@ -6,4 +6,4 @@ if (@Crc32c_FOUND@)
     find_dependency(Crc32c)
 endif()
 
-include("${CMAKE_CURRENT_LIST_DIR}/tg_owtTargets.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/ok-rtcTargets.cmake")

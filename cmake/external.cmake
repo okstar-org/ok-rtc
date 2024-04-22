@@ -1,46 +1,46 @@
 # OpenSSL
-set(TG_OWT_OPENSSL_INCLUDE_PATH "" CACHE STRING "Include path for openssl.")
+set(OK_RTC_OPENSSL_INCLUDE_PATH "" CACHE STRING "Include path for openssl.")
 function(link_openssl target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(OpenSSL REQUIRED)
         target_include_directories(${target_name} SYSTEM PRIVATE ${OPENSSL_INCLUDE_DIR})
         target_link_libraries(${target_name} PRIVATE ${OPENSSL_LIBRARIES})
     else()
-        if (TG_OWT_OPENSSL_INCLUDE_PATH STREQUAL "")
-            message(FATAL_ERROR "You should specify 'TG_OWT_OPENSSL_INCLUDE_PATH'.")
+        if (OK_RTC_OPENSSL_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_OPENSSL_INCLUDE_PATH'.")
         endif()
 
         target_include_directories(${target_name} SYSTEM
         PRIVATE
-            ${TG_OWT_OPENSSL_INCLUDE_PATH}
+            ${OK_RTC_OPENSSL_INCLUDE_PATH}
         )
     endif()
 endfunction()
 
 # Opus
-set(TG_OWT_OPUS_INCLUDE_PATH "" CACHE STRING "Include path for opus.")
+set(OK_RTC_OPUS_INCLUDE_PATH "" CACHE STRING "Include path for opus.")
 function(link_opus target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(OPUS REQUIRED opus)
         target_include_directories(${target_name} SYSTEM PRIVATE ${OPUS_INCLUDE_DIRS})
         target_link_libraries(${target_name} PRIVATE ${OPUS_LINK_LIBRARIES})
     else()
-        if (TG_OWT_OPUS_INCLUDE_PATH STREQUAL "")
-            message(FATAL_ERROR "You should specify 'TG_OWT_OPUS_INCLUDE_PATH'.")
+        if (OK_RTC_OPUS_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_OPUS_INCLUDE_PATH'.")
         endif()
 
         target_include_directories(${target_name} SYSTEM
         PRIVATE
-            ${TG_OWT_OPUS_INCLUDE_PATH}
+            ${OK_RTC_OPUS_INCLUDE_PATH}
         )
     endif()
 endfunction()
 
 # FFmpeg
-set(TG_OWT_FFMPEG_INCLUDE_PATH "" CACHE STRING "Include path for ffmpeg.")
+set(OK_RTC_FFMPEG_INCLUDE_PATH "" CACHE STRING "Include path for ffmpeg.")
 function(link_ffmpeg target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(AVCODEC REQUIRED libavcodec)
         pkg_check_modules(AVFORMAT REQUIRED libavformat)
@@ -64,33 +64,33 @@ function(link_ffmpeg target_name)
             ${SWRESAMPLE_LINK_LIBRARIES}
         )
     else()
-        if (TG_OWT_FFMPEG_INCLUDE_PATH STREQUAL "")
-            message(FATAL_ERROR "You should specify 'TG_OWT_FFMPEG_INCLUDE_PATH'.")
+        if (OK_RTC_FFMPEG_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_FFMPEG_INCLUDE_PATH'.")
         endif()
 
         target_include_directories(${target_name} SYSTEM
         PRIVATE
-            ${TG_OWT_FFMPEG_INCLUDE_PATH}
+            ${OK_RTC_FFMPEG_INCLUDE_PATH}
         )
     endif()
 endfunction()
 
 # libjpeg
-set(TG_OWT_LIBJPEG_INCLUDE_PATH "" CACHE STRING "Include path for libjpeg.")
+set(OK_RTC_LIBJPEG_INCLUDE_PATH "" CACHE STRING "Include path for libjpeg.")
 function(link_libjpeg target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(JPEG REQUIRED)
         target_include_directories(${target_name} SYSTEM PRIVATE ${JPEG_INCLUDE_DIRS})
         target_link_libraries(${target_name} PRIVATE ${JPEG_LIBRARIES})
     else()
-        if (TG_OWT_LIBJPEG_INCLUDE_PATH STREQUAL "")
-            message(FATAL_ERROR "You should specify 'TG_OWT_LIBJPEG_INCLUDE_PATH'.")
+        if (OK_RTC_LIBJPEG_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_LIBJPEG_INCLUDE_PATH'.")
         endif()
 
         target_include_directories(${target_name} SYSTEM
         PRIVATE
-            ${TG_OWT_LIBJPEG_INCLUDE_PATH}
-            ${TG_OWT_LIBJPEG_INCLUDE_PATH}/src
+            ${OK_RTC_LIBJPEG_INCLUDE_PATH}
+            ${OK_RTC_LIBJPEG_INCLUDE_PATH}/src
         )
     endif()
 endfunction()
@@ -98,7 +98,7 @@ endfunction()
 # libabsl
 # HINT: System abseil should be built with -DCMAKE_CXX_STANDARD=20
 function(link_libabsl target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(absl)
         set(absl_FOUND ${absl_FOUND} PARENT_SCOPE)
         if (absl_FOUND)
@@ -123,13 +123,13 @@ function(link_libabsl target_name)
         endif()
     endif()
     if (NOT absl_FOUND)
-        target_link_libraries(${target_name} PRIVATE tg_owt::libabsl)
+        target_link_libraries(${target_name} PRIVATE ok-rtc::libabsl)
     endif()
 endfunction()
 
 # libopenh264
 function(link_libopenh264 target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(LIBOPENH264 openh264)
         set(LIBOPENH264_FOUND ${LIBOPENH264_FOUND} PARENT_SCOPE)
@@ -139,34 +139,34 @@ function(link_libopenh264 target_name)
         endif()
     endif()
     if (NOT LIBOPENH264_FOUND)
-        target_link_libraries(${target_name} PRIVATE tg_owt::libopenh264)
+        target_link_libraries(${target_name} PRIVATE ok-rtc::libopenh264)
         target_include_directories(${target_name} SYSTEM PRIVATE ${libopenh264_loc}/include)
     endif()
 endfunction()
 
 # libvpx
-set(TG_OWT_LIBVPX_INCLUDE_PATH "" CACHE STRING "Include path for libvpx.")
+set(OK_RTC_LIBVPX_INCLUDE_PATH "" CACHE STRING "Include path for libvpx.")
 function(link_libvpx target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(LIBVPX REQUIRED vpx>=1.10.0)
         target_link_libraries(${target_name} PRIVATE ${LIBVPX_LINK_LIBRARIES})
         target_include_directories(${target_name} SYSTEM PRIVATE ${LIBVPX_INCLUDE_DIRS})
     else()
-        if (TG_OWT_LIBVPX_INCLUDE_PATH STREQUAL "")
-            message(FATAL_ERROR "You should specify 'TG_OWT_LIBVPX_INCLUDE_PATH'.")
+        if (OK_RTC_LIBVPX_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_LIBVPX_INCLUDE_PATH'.")
         endif()
 
         target_include_directories(${target_name} SYSTEM
         PRIVATE
-            ${TG_OWT_LIBVPX_INCLUDE_PATH}
+            ${OK_RTC_LIBVPX_INCLUDE_PATH}
         )
     endif()
 endfunction()
 
 # crc32c
 function(link_crc32c target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(Crc32c)
         set(Crc32c_FOUND ${Crc32c_FOUND} PARENT_SCOPE)
         if (Crc32c_FOUND)
@@ -174,7 +174,7 @@ function(link_crc32c target_name)
         endif()
     endif()
     if (NOT Crc32c_FOUND)
-        target_link_libraries(${target_name} PRIVATE tg_owt::libcrc32c)
+        target_link_libraries(${target_name} PRIVATE ok-rtc::libcrc32c)
     endif()
 endfunction()
 
@@ -191,7 +191,7 @@ function(link_glib target_name)
         ${GOBJECT_INCLUDE_DIRS}
         ${GLIB2_INCLUDE_DIRS}
     )
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         target_link_libraries(${target_name}
         PRIVATE
             ${GIO_UNIX_LINK_LIBRARIES}
@@ -204,7 +204,7 @@ endfunction()
 
 # x11
 function(link_x11 target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(X11 REQUIRED COMPONENTS Xcomposite Xdamage Xext Xfixes Xrender Xrandr Xtst)
         target_include_directories(${target_name} SYSTEM
         PRIVATE
@@ -244,7 +244,7 @@ endfunction()
 
 # Alsa
 function(link_libalsa target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(ALSA REQUIRED)
         target_include_directories(${target_name} SYSTEM PRIVATE ${ALSA_INCLUDE_DIRS})
     endif()
@@ -252,7 +252,7 @@ endfunction()
 
 # PulseAudio
 function(link_libpulse target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
         pkg_check_modules(PULSE REQUIRED libpulse)
         target_include_directories(${target_name} SYSTEM PRIVATE ${PULSE_INCLUDE_DIRS})
@@ -261,7 +261,7 @@ endfunction()
 
 # dl
 function(link_dl target_name)
-    if (TG_OWT_PACKAGED_BUILD)
+    if (OK_RTC_PACKAGED_BUILD)
         target_link_libraries(${target_name} PRIVATE ${CMAKE_DL_LIBS})
     endif()
 endfunction()

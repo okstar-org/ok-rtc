@@ -1,6 +1,6 @@
 add_library(libyuv OBJECT EXCLUDE_FROM_ALL)
 init_target(libyuv)
-add_library(tg_owt::libyuv ALIAS libyuv)
+add_library(ok-rtc::libyuv ALIAS libyuv)
 
 link_libjpeg(libyuv)
 

@@ -1,6 +1,6 @@
 add_library(libopenh264 OBJECT EXCLUDE_FROM_ALL)
 init_target(libopenh264)
-add_library(tg_owt::libopenh264 ALIAS libopenh264)
+add_library(ok-rtc::libopenh264 ALIAS libopenh264)
 
 set(libopenh264_loc ${third_party_loc}/openh264/src)
 

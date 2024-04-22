@@ -1,6 +1,6 @@
 add_library(libcrc32c OBJECT EXCLUDE_FROM_ALL)
 init_target(libcrc32c)
-add_library(tg_owt::libcrc32c ALIAS libcrc32c)
+add_library(ok-rtc::libcrc32c ALIAS libcrc32c)
 
 set(libcrc32c_loc ${third_party_loc}/crc32c/src)
 

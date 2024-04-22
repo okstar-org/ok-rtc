@@ -1,6 +1,6 @@
 add_library(libsrtp OBJECT EXCLUDE_FROM_ALL)
 init_target(libsrtp)
-add_library(tg_owt::libsrtp ALIAS libsrtp)
+add_library(ok-rtc::libsrtp ALIAS libsrtp)
 
 link_openssl(libsrtp)
 

@@ -11,7 +11,7 @@ set(arm_use_neon 0)
 set(is_riscv64 0)
 set(riscv_use_rvv 0)
 
-option(TG_OWT_ARCH_ARMV7_USE_NEON "Use NEON SIMD instructions when building for ARMv7" ON)
+option(OK_RTC_ARCH_ARMV7_USE_NEON "Use NEON SIMD instructions when building for ARMv7" ON)
 
 
 # Check for 64-bit x86 (aka x64):
@@ -89,8 +89,8 @@ if ((HAVE_ARM_DEF1 OR HAVE_ARM_DEF2) OR HAVE_ARM_DEF3)
         # The NEON SIMD instructions are mandatory on Cortex-A8, but optional
         # on Cortex-A9; needs to be explicitly enabled in the toolchain.
         #
-        if (TG_OWT_ARCH_ARMV7_USE_NEON)
-            message(STATUS "NEON SIMD instructions enabled (can be disabled with -DTG_OWT_ARCH_ARMV7_USE_NEON=OFF).")
+        if (OK_RTC_ARCH_ARMV7_USE_NEON)
+            message(STATUS "NEON SIMD instructions enabled (can be disabled with -DOK_RTC_ARCH_ARMV7_USE_NEON=OFF).")
             set(arm_use_neon 1)
 
             if (WIN32)
@@ -103,7 +103,7 @@ if ((HAVE_ARM_DEF1 OR HAVE_ARM_DEF2) OR HAVE_ARM_DEF3)
                 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -mfpu=neon")
             endif()
         else()
-            message(STATUS "NEON SIMD instructions not used (can be enabled with -DTG_OWT_ARCH_ARMV7_USE_NEON=ON).")
+            message(STATUS "NEON SIMD instructions not used (can be enabled with -DOK_RTC_ARCH_ARMV7_USE_NEON=ON).")
         endif()
     else()
         message(STATUS "ARM Architecture version is 6 or lower.")
