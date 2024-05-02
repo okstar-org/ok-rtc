@@ -2675,6 +2675,7 @@ PUBLIC
     $<INSTALL_INTERFACE:${webrtc_includedir}>
 )
 
+if(NOT OK_NO_INSTALL)
 install(
     TARGETS ${export_targets}
     EXPORT ok-rtcTargets
@@ -2698,3 +2699,4 @@ install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/ok-rtcConfig.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/ok-rtc
 )
+endif()
