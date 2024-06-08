@@ -24,7 +24,7 @@ option(OK_RTC_USE_PROTOBUF "Use protobuf to generate additional headers. Useful 
 cmake_dependent_option(OK_RTC_USE_X11 "Use X11 for desktop capture." ON "UNIX; NOT APPLE" OFF)
 cmake_dependent_option(OK_RTC_USE_PIPEWIRE "Use pipewire for desktop capture." ON "UNIX; NOT APPLE" OFF)
 cmake_dependent_option(OK_RTC_DLOPEN_PIPEWIRE "dlopen pipewire for desktop capture." ${not_packaged_build} OK_RTC_USE_PIPEWIRE OFF)
-option(OK_RTC_BUILD_AUDIO_BACKENDS "Build webrtc audio backends." OFF)
+option(OK_RTC_BUILD_AUDIO_BACKENDS "Build webrtc audio backends." ON)
 
 if (BUILD_SHARED_LIBS)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -54,6 +54,8 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT o
 get_filename_component(webrtc_loc "src" REALPATH)
 set(third_party_loc ${webrtc_loc}/third_party)
 set(tools_loc ${webrtc_loc}/tools)
+
+add_definitions(-DABSL_USES_STD_STRING_VIEW=1)
 
 include(GNUInstallDirs)
 set(webrtc_includedir ${CMAKE_INSTALL_INCLUDEDIR}/ok-rtc)
