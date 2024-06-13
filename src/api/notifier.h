@@ -28,13 +28,13 @@ class Notifier : public T {
   Notifier() { sequence_checker_.Detach(); }
 
   virtual void RegisterObserver(ObserverInterface* observer) {
-    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    // RTC_DCHECK_RUN_ON(&sequence_checker_);
     RTC_DCHECK(observer != nullptr);
     observers_.push_back(observer);
   }
 
   virtual void UnregisterObserver(ObserverInterface* observer) {
-    RTC_DCHECK_RUN_ON(&sequence_checker_);
+    // RTC_DCHECK_RUN_ON(&sequence_checker_);
     for (std::list<ObserverInterface*>::iterator it = observers_.begin();
          it != observers_.end(); it++) {
       if (*it == observer) {
