@@ -53,14 +53,12 @@
 #define EXIT_ON_ERROR(hres) \
   do {                      \
     if (FAILED(hres))       \
-      goto Exit;            \
   } while (0)
 
 // Macro that continues to a COM error.
 #define CONTINUE_ON_ERROR(hres) \
   do {                          \
     if (FAILED(hres))           \
-      goto Next;                \
   } while (0)
 
 // Macro that releases a COM object if not NULL.
