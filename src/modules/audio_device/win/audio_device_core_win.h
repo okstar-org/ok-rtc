@@ -299,10 +299,9 @@ class AudioDeviceWindowsCore : public AudioDeviceGeneric,
     return S_OK;
   }
 
-  HRESULT __stdcall OnDefaultDeviceChanged(
-      EDataFlow flow,
-      ERole role,
-      LPCWSTR pwstrDefaultDeviceId) override;
+  HRESULT __stdcall OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDefaultDeviceId) override{
+    return S_OK;
+  };
 
   HRESULT __stdcall OnPropertyValueChanged(LPCWSTR pwstrDeviceId,
                                            const PROPERTYKEY key) override {
