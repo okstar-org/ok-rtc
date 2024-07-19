@@ -49,16 +49,31 @@
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/sleep.h"
 
+#include <mediaobj.h>
+#include <mmdeviceapi.h>
+
+// Ensure the required libraries are linked
+#pragma comment(lib, "secur32.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "dmoguids.lib")
+#pragma comment(lib, "wmcodecdspuuid.lib")
+#pragma comment(lib, "msdmo.lib")
+#pragma comment(lib, "strmiids.lib")
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "mmdevapi.lib")
+
 // Macro that calls a COM method returning HRESULT value.
 #define EXIT_ON_ERROR(hres) \
   do {                      \
     if (FAILED(hres))       \
+        return -1;          \
   } while (0)
 
 // Macro that continues to a COM error.
 #define CONTINUE_ON_ERROR(hres) \
   do {                          \
     if (FAILED(hres))           \
+        return -1;              \
   } while (0)
 
 // Macro that releases a COM object if not NULL.
@@ -335,6 +350,30 @@ bool AudioDeviceWindowsCore::CoreAudioIsSupported() {
   }
 
   return (coreAudioIsSupported);
+}
+
+ULONG __stdcall AudioDeviceWindowsCore::AddRef() { return InterlockedIncrement(&ref_count_); }
+
+ULONG __stdcall AudioDeviceWindowsCore::Release() {
+  LONG refCount = InterlockedDecrement(&ref_count_);
+  if (refCount == 0) {
+    delete this;
+  }
+
+  return refCount;
+}
+
+HRESULT __stdcall AudioDeviceWindowsCore::QueryInterface(REFIID iid, void **object) {
+  if (!object) {
+    return E_POINTER;
+  } else if (iid != __uuidof(IMMNotificationClient) && iid != IID_IUnknown) {
+    return E_NOINTERFACE;
+  }
+
+  *object = static_cast<IMMNotificationClient *>(this);
+  
+  AddRef();
+  return S_OK;
 }
 
 // ============================================================================
