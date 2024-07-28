@@ -50,16 +50,10 @@
 #include "system_wrappers/include/sleep.h"
 
 // Macro that calls a COM method returning HRESULT value.
-#define EXIT_ON_ERROR(hres) \
-  do {                      \
-    if (FAILED(hres))       \
-  } while (0)
+#define EXIT_ON_ERROR(hres)
 
 // Macro that continues to a COM error.
-#define CONTINUE_ON_ERROR(hres) \
-  do {                          \
-    if (FAILED(hres))           \
-  } while (0)
+#define CONTINUE_ON_ERROR(hres)
 
 // Macro that releases a COM object if not NULL.
 #define SAFE_RELEASE(p) \
