@@ -586,6 +586,7 @@ int16_t AudioDeviceLinuxALSA::PlayoutDevices() {
 
 int32_t AudioDeviceLinuxALSA::SetPlayoutDevice(uint16_t index) {
   if (_playIsInitialized) {
+    RTC_LOG(LS_ERROR) << "_playIsInitialized";
     return -1;
   }
 
@@ -743,10 +744,12 @@ int32_t AudioDeviceLinuxALSA::InitPlayoutLocked() {
   int errVal = 0;
 
   if (_playing) {
+    RTC_LOG(LS_WARNING) << "Is playing";
     return -1;
   }
 
   if (!_outputDeviceIsSpecified) {
+    RTC_LOG(LS_WARNING) << "Output device is not specified";
     return -1;
   }
 
