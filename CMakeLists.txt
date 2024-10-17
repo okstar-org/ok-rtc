@@ -2677,6 +2677,10 @@ PUBLIC
     $<INSTALL_INTERFACE:${webrtc_includedir}>
 )
 
+if(MSVC)
+    target_link_libraries(ok-rtc PUBLIC dmoguids)
+endif()
+
 if(NOT OK_NO_INSTALL)
 install(
     TARGETS ${export_targets}
