@@ -128,6 +128,7 @@ function(link_libabsl target_name)
 endfunction()
 
 # libopenh264
+set(OK_RTC_OPENH264_INCLUDE_PATH "" CACHE STRING "Include path for openh264.")
 function(link_libopenh264 target_name)
     if (OK_RTC_PACKAGED_BUILD)
         find_package(PkgConfig REQUIRED)
@@ -137,10 +138,30 @@ function(link_libopenh264 target_name)
             target_link_libraries(${target_name} PRIVATE ${LIBOPENH264_LINK_LIBRARIES})
             target_include_directories(${target_name} SYSTEM PRIVATE ${LIBOPENH264_INCLUDE_DIRS})
         endif()
+    else()
+        if (OK_RTC_OPENH264_INCLUDE_PATH STREQUAL "")
+            message(FATAL_ERROR "You should specify 'OK_RTC_OPENH264_INCLUDE_PATH'.")
+        endif()
+
+        target_include_directories(${target_name} SYSTEM
+        PRIVATE
+            ${OK_RTC_OPENH264_INCLUDE_PATH}
+        )
     endif()
-    if (NOT LIBOPENH264_FOUND)
-        target_link_libraries(${target_name} PRIVATE ok-rtc::libopenh264)
-        target_include_directories(${target_name} SYSTEM PRIVATE ${libopenh264_loc}/include)
+endfunction()
+
+# libSRTP
+function(link_libsrtp target_name)
+    if (OK_RTC_PACKAGED_BUILD)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(SRTP libsrtp2)
+        if (SRTP_FOUND)
+            target_include_directories(${target_name} SYSTEM PRIVATE ${SRTP_INCLUDE_DIRS})
+            target_link_libraries(${target_name} PRIVATE ${SRTP_LINK_LIBRARIES})
+        endif()
+    endif()
+    if (NOT SRTP_FOUND)
+        target_link_libraries(${target_name} PRIVATE ok-rtc::libsrtp)
     endif()
 endfunction()
 

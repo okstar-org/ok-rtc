@@ -25,6 +25,7 @@ INTERFACE
     WEBRTC_HAVE_SCTP
     NO_MAIN_THREAD_WRAPPING
     HAVE_WEBRTC_VIDEO
+    RTC_ENABLE_H265
     RTC_ENABLE_VP9
     RTC_DISABLE_TRACE_EVENTS
     BWE_TEST_LOGGING_COMPILE_TIME_ENABLE=0
@@ -61,6 +62,7 @@ if (WIN32)
     target_compile_definitions(libwebrtcbuild
     INTERFACE
         WEBRTC_WIN
+        RTC_ENABLE_WIN_WGC
     )
 else()
     target_compile_definitions(libwebrtcbuild
