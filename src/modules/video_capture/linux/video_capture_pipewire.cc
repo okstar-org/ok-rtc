@@ -10,6 +10,7 @@
 
 #include "modules/video_capture/linux/video_capture_pipewire.h"
 
+#include <spa/buffer/meta.h>
 #include <spa/param/format.h>
 #include <spa/param/video/format-utils.h>
 #include <spa/pod/builder.h>
