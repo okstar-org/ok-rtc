@@ -490,6 +490,36 @@ AudioDeviceWindowsCore::AudioDeviceWindowsCore()
   }
 }
 
+
+HRESULT __stdcall AudioDeviceWindowsCore::OnDefaultDeviceChanged(
+    EDataFlow flow, ERole role, LPCWSTR pwstrDefaultDeviceId) {
+  if (flow != eRender || role != eCommunications)
+    SetEvent(_hDeviceRestartEvent);
+  return S_OK;
+}
+
+ULONG AudioDeviceWindowsCore::AddRef() {
+  ULONG new_ref = InterlockedIncrement(&ref_count_);
+  return new_ref;
+}
+
+ULONG AudioDeviceWindowsCore::Release() {
+  ULONG new_ref = InterlockedDecrement(&ref_count_);
+  return new_ref;
+}
+
+HRESULT AudioDeviceWindowsCore::QueryInterface(REFIID iid, void** object) {
+  if (object == nullptr) {
+    return E_POINTER;
+  }
+  if (iid == IID_IUnknown || iid == __uuidof(IMMNotificationClient)) {
+    *object = static_cast<IMMNotificationClient*>(this);
+    return S_OK;
+  };
+  *object = nullptr;
+  return E_NOINTERFACE;
+}
+
 // ----------------------------------------------------------------------------
 //  AudioDeviceWindowsCore() - dtor
 // ----------------------------------------------------------------------------
