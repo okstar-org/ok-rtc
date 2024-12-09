@@ -1,2 +1,6 @@
 out/
+out-Debug/
+out-Release/
+out-MinSizeRel/
+out-RelWithDebInfo/
 .DS_Store
