@@ -17,6 +17,9 @@ function(link_openssl target_name)
     endif()
 endfunction()
 
+#ILBC
+add_compile_definitions("WEBRTC_USE_BUILTIN_ILBC=1")
+
 # Opus
 set(OK_RTC_OPUS_INCLUDE_PATH "" CACHE STRING "Include path for opus.")
 function(link_opus target_name)
@@ -25,6 +28,8 @@ function(link_opus target_name)
         pkg_check_modules(OPUS REQUIRED opus)
         target_include_directories(${target_name} SYSTEM PRIVATE ${OPUS_INCLUDE_DIRS})
         target_link_libraries(${target_name} PRIVATE ${OPUS_LINK_LIBRARIES})
+        add_compile_definitions("WEBRTC_USE_BUILTIN_OPUS=1")
+
     else()
         if (OK_RTC_OPUS_INCLUDE_PATH STREQUAL "")
             message(FATAL_ERROR "You should specify 'OK_RTC_OPUS_INCLUDE_PATH'.")
