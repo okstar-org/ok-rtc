@@ -248,7 +248,7 @@ uint32_t GetInitialEncoderMaxBitrate(int initial_encoder_max_bitrate) {
   // reasonable use cases as it allows adding the max of multiple streams
   // without wrappping around.
   const int kFallbackMaxBitrateBps = 10000000;
-  RTC_DLOG(LS_ERROR) << "ERROR: Initial encoder max bitrate = "
+  RTC_DLOG(LS_WARNING) << "Initial encoder max bitrate = "
                      << initial_encoder_max_bitrate << " which is <= 0!";
   RTC_DLOG(LS_INFO) << "Using default encoder max bitrate = 10 Mbps";
   return kFallbackMaxBitrateBps;
@@ -628,6 +628,7 @@ bool VideoSendStreamImpl::started() {
 
 void VideoSendStreamImpl::Start() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
+  RTC_LOG(LS_INFO) << "VideoSendStreamImpl::Start";
   // This sender is allowed to send RTP packets. Start monitoring and allocating
   // a rate if there is also active encodings. (has_active_encodings_).
   rtp_video_sender_->SetSending(true);
@@ -638,6 +639,7 @@ void VideoSendStreamImpl::Start() {
 
 bool VideoSendStreamImpl::IsRunning() const {
   RTC_DCHECK_RUN_ON(&thread_checker_);
+    RTC_LOG(LS_INFO) << "VideoSendStreamImpl::IsRunning";
   return check_encoder_activity_task_.Running();
 }
 
@@ -645,6 +647,8 @@ void VideoSendStreamImpl::StartupVideoSendStream() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
   RTC_DCHECK(rtp_video_sender_->IsActive());
   RTC_DCHECK(has_active_encodings_);
+
+  RTC_LOG(LS_INFO) << "VideoSendStreamImpl::StartupVideoSendStream";
 
   bitrate_allocator_->AddObserver(this, GetAllocationConfig());
   // Start monitoring encoder activity.
@@ -675,8 +679,8 @@ void VideoSendStreamImpl::StartupVideoSendStream() {
 }
 
 void VideoSendStreamImpl::Stop() {
-  RTC_DCHECK_RUN_ON(&thread_checker_);
   RTC_LOG(LS_INFO) << "VideoSendStreamImpl::Stop";
+  RTC_DCHECK_RUN_ON(&thread_checker_);
   if (!rtp_video_sender_->IsActive())
     return;
 
@@ -689,6 +693,9 @@ void VideoSendStreamImpl::Stop() {
 
 void VideoSendStreamImpl::StopVideoSendStream() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
+
+  RTC_LOG(LS_INFO) << "VideoSendStreamImpl::StopVideoSendStream";
+
   bitrate_allocator_->RemoveObserver(this);
   check_encoder_activity_task_.Stop();
   video_stream_encoder_->OnBitrateUpdated(DataRate::Zero(), DataRate::Zero(),

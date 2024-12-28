@@ -371,6 +371,7 @@ void RtpTransceiver::SetChannel(
 }
 
 void RtpTransceiver::ClearChannel() {
+    RTC_LOG(LS_INFO) << __func__ ;
   RTC_DCHECK_RUN_ON(thread_);
 
   if (!channel_) {

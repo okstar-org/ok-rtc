@@ -99,6 +99,7 @@ JsepTransport::JsepTransport(
                                 std::move(sctp_transport))
                           : nullptr),
       rtcp_mux_active_callback_(std::move(rtcp_mux_active_callback)) {
+  RTC_LOG(LS_INFO) << __FUNCTION__  << " : " << mid_;
   TRACE_EVENT0("webrtc", "JsepTransport::JsepTransport");
   RTC_DCHECK(ice_transport_);
   RTC_DCHECK(rtp_dtls_transport_);
@@ -126,6 +127,9 @@ JsepTransport::JsepTransport(
 
 JsepTransport::~JsepTransport() {
   TRACE_EVENT0("webrtc", "JsepTransport::~JsepTransport");
+
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " : " << mid_;
+
   if (sctp_transport_) {
     sctp_transport_->Clear();
   }

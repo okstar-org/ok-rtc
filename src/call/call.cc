@@ -699,6 +699,7 @@ Call::Call(const CallConfig& config,
 }
 
 Call::~Call() {
+    RTC_LOG(LS_INFO) << __func__;
   RTC_DCHECK_RUN_ON(worker_thread_);
 
   RTC_CHECK(audio_send_ssrcs_.empty());
@@ -973,6 +974,7 @@ void Call::DestroyVideoSendStream(webrtc::VideoSendStream* send_stream) {
 
 webrtc::VideoReceiveStreamInterface* Call::CreateVideoReceiveStream(
     webrtc::VideoReceiveStreamInterface::Config configuration) {
+    RTC_LOG(LS_INFO) << __func__ ;
   TRACE_EVENT0("webrtc", "Call::CreateVideoReceiveStream");
   RTC_DCHECK_RUN_ON(worker_thread_);
 
@@ -1006,6 +1008,7 @@ webrtc::VideoReceiveStreamInterface* Call::CreateVideoReceiveStream(
 
 void Call::DestroyVideoReceiveStream(
     webrtc::VideoReceiveStreamInterface* receive_stream) {
+    RTC_LOG(LS_INFO) << __func__ ;
   TRACE_EVENT0("webrtc", "Call::DestroyVideoReceiveStream");
   RTC_DCHECK_RUN_ON(worker_thread_);
   RTC_DCHECK(receive_stream != nullptr);
@@ -1024,6 +1027,8 @@ void Call::DestroyVideoReceiveStream(
 
 FlexfecReceiveStream* Call::CreateFlexfecReceiveStream(
     const FlexfecReceiveStream::Config config) {
+    RTC_LOG(LS_INFO) << __func__ ;
+
   TRACE_EVENT0("webrtc", "Call::CreateFlexfecReceiveStream");
   RTC_DCHECK_RUN_ON(worker_thread_);
 
@@ -1046,6 +1051,8 @@ FlexfecReceiveStream* Call::CreateFlexfecReceiveStream(
 }
 
 void Call::DestroyFlexfecReceiveStream(FlexfecReceiveStream* receive_stream) {
+    RTC_LOG(LS_INFO) << __func__ ;
+
   TRACE_EVENT0("webrtc", "Call::DestroyFlexfecReceiveStream");
   RTC_DCHECK_RUN_ON(worker_thread_);
 

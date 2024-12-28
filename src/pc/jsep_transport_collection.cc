@@ -238,9 +238,9 @@ const cricket::JsepTransport* JsepTransportCollection::GetTransportForMid(
 bool JsepTransportCollection::SetTransportForMid(
     const std::string& mid,
     cricket::JsepTransport* jsep_transport) {
+  RTC_LOG(LS_INFO) << __FUNCTION__ << " mid:" << mid;
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   RTC_DCHECK(jsep_transport);
-
   auto it = mid_to_transport_.find(mid);
   if (it != mid_to_transport_.end() && it->second == jsep_transport)
     return true;

@@ -4918,6 +4918,7 @@ RTCError SdpOfferAnswerHandler::PushdownTransportDescription(
 }
 
 void SdpOfferAnswerHandler::RemoveStoppedTransceivers() {
+    RTC_LOG(LS_INFO) << __func__ ;
   TRACE_EVENT0("webrtc", "SdpOfferAnswerHandler::RemoveStoppedTransceivers");
   RTC_DCHECK_RUN_ON(signaling_thread());
   // 3.2.10.1: For each transceiver in the connection's set of transceivers
@@ -4960,6 +4961,7 @@ void SdpOfferAnswerHandler::RemoveStoppedTransceivers() {
 
 void SdpOfferAnswerHandler::RemoveUnusedChannels(
     const SessionDescription* desc) {
+    RTC_LOG(LS_INFO) << __func__ ;
   RTC_DCHECK_RUN_ON(signaling_thread());
   if (ConfiguredForMedia()) {
     // Destroy video channel first since it may have a pointer to the

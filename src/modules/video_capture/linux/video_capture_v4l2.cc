@@ -105,9 +105,9 @@ int32_t VideoCaptureModuleV4L2::Init(const char* deviceUniqueIdUTF8) {
 }
 
 VideoCaptureModuleV4L2::~VideoCaptureModuleV4L2() {
+    RTC_LOG(LS_INFO) << __func__ ;
   RTC_DCHECK_RUN_ON(&api_checker_);
   RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
-
   StopCapture();
   if (_deviceFd != -1)
     close(_deviceFd);
@@ -115,8 +115,8 @@ VideoCaptureModuleV4L2::~VideoCaptureModuleV4L2() {
 
 int32_t VideoCaptureModuleV4L2::StartCapture(
     const VideoCaptureCapability& capability) {
+    RTC_LOG(LS_INFO) << __func__ ;
   RTC_DCHECK_RUN_ON(&api_checker_);
-
   if (_captureStarted) {
     if (capability == _requestedCapability) {
       return 0;
@@ -310,8 +310,8 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
 }
 
 int32_t VideoCaptureModuleV4L2::StopCapture() {
+    RTC_LOG(LS_INFO) << __func__ ;
   RTC_DCHECK_RUN_ON(&api_checker_);
-
   if (!_captureThread.empty()) {
     {
       MutexLock lock(&capture_lock_);

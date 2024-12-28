@@ -295,10 +295,12 @@ RTCError JsepTransportController::AddRemoteCandidates(
   RTC_DCHECK(VerifyCandidates(candidates).ok());
   auto jsep_transport = GetJsepTransportByName(transport_name);
   if (!jsep_transport) {
-    RTC_LOG(LS_WARNING) << "Not adding candidate because the JsepTransport "
+    RTC_LOG(LS_WARNING) << "Not adding candidate because the JsepTransport[" << transport_name << "] "
                            "doesn't exist. Ignore it.";
     return RTCError::OK();
   }
+
+  RTC_LOG(LS_INFO) << "Adding candidate to JsepTransport[" << transport_name << "] successfully.";
   return jsep_transport->AddRemoteCandidates(candidates);
 }
 

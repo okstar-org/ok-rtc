@@ -1593,7 +1593,8 @@ int P2PTransportChannel::SendPacket(const char* data,
       rtc::PacketType::kData;
   int sent = selected_connection_->Send(data, len, modified_options);
   if (sent <= 0) {
-    RTC_DCHECK(sent < 0);
+      RTC_LOG(LS_WARNING) << " Send error: " << sent;
+//      RTC_DCHECK(sent < 0);
     error_ = selected_connection_->GetError();
     return sent;
   }

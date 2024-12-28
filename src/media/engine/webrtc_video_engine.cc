@@ -2926,8 +2926,8 @@ void WebRtcVideoReceiveChannel::ConfigureReceiverRtp(
 }
 
 bool WebRtcVideoReceiveChannel::RemoveRecvStream(uint32_t ssrc) {
+  RTC_LOG(LS_INFO) << __func__ << " :" << ssrc;
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_LOG(LS_INFO) << "RemoveRecvStream: " << ssrc;
 
   auto stream = receive_streams_.find(ssrc);
   if (stream == receive_streams_.end()) {
@@ -3309,6 +3309,7 @@ WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::WebRtcVideoReceiveStream(
 
 WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::
     ~WebRtcVideoReceiveStream() {
+    RTC_LOG(LS_INFO) << __func__ ;
   call_->DestroyVideoReceiveStream(stream_);
   if (flexfec_stream_)
     call_->DestroyFlexfecReceiveStream(flexfec_stream_);
@@ -3581,7 +3582,7 @@ void WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::OnFrame(
 
   if (sink_ == NULL) {
     RTC_LOG(LS_WARNING)
-        << "VideoReceiveStreamInterface not connected to a VideoSink.";
+        << "VideoReceiveStreamInterface [ssrc:" << stream_params_.ssrcs.front() <<"] not connected to a VideoSink.";
     return;
   }
 

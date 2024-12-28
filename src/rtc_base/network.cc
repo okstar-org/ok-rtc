@@ -631,8 +631,8 @@ void BasicNetworkManager::ConvertIfAddrs(
     }
     // Skip ones which are down.
     if (!(cursor->ifa_flags & IFF_RUNNING)) {
-      RTC_LOG(LS_INFO) << "Skip interface because of not IFF_RUNNING: "
-                       << ip.ToSensitiveString();
+//      RTC_LOG(LS_INFO) << "Skip interface because of not IFF_RUNNING: "
+//                       << ip.ToSensitiveString();
       continue;
     }
 

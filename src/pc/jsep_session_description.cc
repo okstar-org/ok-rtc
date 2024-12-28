@@ -242,10 +242,16 @@ bool JsepSessionDescription::AddCandidate(
       new JsepIceCandidate(candidate->sdp_mid(),
                            static_cast<int>(mediasection_index),
                            updated_candidate));
-  if (!candidate_collection_[mediasection_index].HasCandidate(
-          updated_candidate_wrapper.get())) {
-    candidate_collection_[mediasection_index].add(
+
+  if(mediasection_index >= candidate_collection_.size()){
+      candidate_collection_.resize(number_of_mediasections());
+  }
+
+  if (!candidate_collection_[mediasection_index].HasCandidate(updated_candidate_wrapper.get())) {
+
+      candidate_collection_[mediasection_index].add(
         updated_candidate_wrapper.release());
+
     UpdateConnectionAddress(
         candidate_collection_[mediasection_index],
         description_->contents()[mediasection_index].media_description());

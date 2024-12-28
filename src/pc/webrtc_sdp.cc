@@ -832,6 +832,10 @@ static void GetCandidatesByMindex(const SessionDescriptionInterface& desci,
     return;
   }
   const IceCandidateCollection* cc = desci.candidates(mline_index);
+  if(!cc){
+      RTC_LOG(LS_WARNING) << "Unable to find candidate from mline_index: " << mline_index;
+      return;
+  }
   for (size_t i = 0; i < cc->count(); ++i) {
     const IceCandidateInterface* candidate = cc->at(i);
     candidates->push_back(candidate->candidate());

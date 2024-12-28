@@ -21,8 +21,6 @@ namespace internal {
 class RaceCheckerScope;
 }  // namespace internal
 
-// Best-effort race-checking implementation. This primitive uses no
-// synchronization at all to be as-fast-as-possible in the non-racy case.
 class RTC_LOCKABLE RaceChecker {
  public:
   friend class internal::RaceCheckerScope;
