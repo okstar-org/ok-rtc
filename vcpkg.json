@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "dependencies": [
+    {
+      "name": "ffmpeg",
+      "default-features": false,
+      "features": ["avcodec", "avdevice", "avfilter", "avformat", "swresample", "swscale"]
+    },
+    "libjpeg-turbo",
+    "openh264",
+    "opus",
+    "libvpx",
+    "abseil",
+    "crc32c",
+    {"name":"pkgconf", "host":true},
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    },
+    {"name":"vcpkg-cmake-get-vars", "host": true},
+    {"name":"vcpkg-tool-meson", "host": true}
+  ],
+  "overrides": [
+    {"name":"abseil", "version":"20240116.2#3"}
+  ],
+  "builtin-baseline": "58950f88544e4637524dbd6a01d0317cf4cb77fc"
+}

@@ -985,7 +985,7 @@ const std::string& ProduceIceCandidateStats(Timestamp timestamp,
     candidate_stats->address = candidate.address().ipaddr().ToString();
     candidate_stats->port = static_cast<int32_t>(candidate.address().port());
     candidate_stats->protocol = candidate.protocol();
-    candidate_stats->candidate_type = candidate.type_name();
+    candidate_stats->candidate_type = std::string(candidate.type_name());
     candidate_stats->priority = static_cast<int32_t>(candidate.priority());
     candidate_stats->foundation = candidate.foundation();
     auto related_address = candidate.related_address();

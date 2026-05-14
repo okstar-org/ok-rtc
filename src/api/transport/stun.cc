@@ -620,7 +620,7 @@ bool StunMessage::Read(ByteBufferReader* buf) {
   if (rtc::NetworkToHost32(magic_cookie_int) != kStunMagicCookie) {
     // If magic cookie is invalid it means that the peer implements
     // RFC3489 instead of RFC5389.
-    transaction_id.insert(0, magic_cookie);
+    transaction_id.insert(0, std::string(magic_cookie));
   }
   RTC_DCHECK(IsValidTransactionId(transaction_id));
   transaction_id_ = transaction_id;

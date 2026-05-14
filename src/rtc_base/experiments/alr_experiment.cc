@@ -52,7 +52,7 @@ AlrExperimentSettings::CreateFromFieldTrial(
     if (experiment_name == kScreenshareProbingBweExperimentName) {
       // This experiment is now default-on with fixed settings.
       // TODO(sprang): Remove this kill-switch and clean up experiment code.
-      group_name = kDefaultProbingScreenshareBweSettings;
+      group_name = std::string(kDefaultProbingScreenshareBweSettings);
     } else {
       return ret;
     }
