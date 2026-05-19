@@ -78,7 +78,7 @@ function(init_target target_name) # init_target(my_target folder_name)
                 -fobjc-arc
                 -fvisibility=hidden
                 -fvisibility-inlines-hidden
-            )
+            )   
         else()
             target_compile_options(${target_name}
             PRIVATE

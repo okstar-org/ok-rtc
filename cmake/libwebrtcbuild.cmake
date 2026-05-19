@@ -71,10 +71,19 @@ else()
     )
 
     if (APPLE)
-        target_compile_definitions(libwebrtcbuild
-        INTERFACE
-            WEBRTC_MAC
-        )
+        if(IOS)
+            target_compile_definitions(libwebrtcbuild
+                INTERFACE
+                WEBRTC_MAC
+                WEbRTC_IOS
+            )
+        else()
+            target_compile_definitions(libwebrtcbuild
+                INTERFACE
+                WEBRTC_MAC
+            )
+        endif()
+        
         target_link_options(libwebrtcbuild
         INTERFACE
             -ObjC

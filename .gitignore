@@ -6,3 +6,15 @@ out-RelWithDebInfo/
 .DS_Store
 .cmake-build-debug
 .cmake-build-release
+src/third_party/fdk-aac
+src/third_party/ffmpeg
+src/third_party/libvpx*
+src/third_party/openssl
+src/third_party/opus
+src/third_party/x264
+src/third_party/fdk-aac
+src/third_party/libjpeg*
+src/third_party/openh264
+build
+src/third_party/fdk-aac/
+

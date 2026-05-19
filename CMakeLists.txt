@@ -76,9 +76,17 @@ include(cmake/external.cmake)
 include(cmake/libpffft.cmake)
 include(cmake/librnnoise.cmake)
 include(cmake/libyuv.cmake)
-if (APPLE)
+if(MAC)
+    message(STATUS "++++lym MAC")
     include(cmake/libsdkmacos.cmake)
+elseif(IOS)
+    message(STATUS "++++lym IOS")
+    include(cmake/libcrc32c.cmake)
+else()
+    message(STATUS "++++lym NOT MAC AND NOT IOS")
+    # include(cmake/libsdklinux.cmake)
 endif()
+
 
 add_library(ok-rtc)
 init_target(ok-rtc)
@@ -143,18 +151,77 @@ if (is_x86 OR is_x64)
 endif()
 
 if (APPLE)
-    target_link_libraries(ok-rtc PUBLIC ok-rtc::libsdkmacos)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        target_link_libraries(ok-rtc PUBLIC ok-rtc::libsdkmacos)
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        # iOS平台的配置
+    endif()
 endif()
 
-link_openssl(ok-rtc)
-link_ffmpeg(ok-rtc)
-link_opus(ok-rtc)
-link_libabsl(ok-rtc)
-link_libopenh264(ok-rtc)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    # add_subdirectory(${webrtc_loc}/third_party/crc32c/src)
+
+    # 设置头文件路径
+    target_include_directories(ok-rtc PRIVATE
+        ${third_party_loc}/openssl/arm64/include
+        ${third_party_loc}/ffmpeg/arm64/include
+        ${third_party_loc}/openh264/src/install/arm64/include
+        ${third_party_loc}/opus/arm64/include/opus
+        ${third_party_loc}/libvpx/VPX.framework/Headers
+    )
+
+    # 设置库文件路径
+    target_link_directories(ok-rtc PRIVATE
+        ${third_party_loc}/openssl/lib
+        ${third_party_loc}/ffmpeg/lib
+        ${third_party_loc}/openh264/src/install/arm64/lib
+        ${third_party_loc}/opus/lib
+    )
+
+    target_link_libraries(ok-rtc PRIVATE
+        ssl
+        crypto
+        avcodec
+        avformat
+        avutil
+        openh264
+        vpx
+        ok-rtc::libcrc32c
+    )
+
+    # 链接 iOS 框架
+    target_link_libraries(ok-rtc PRIVATE
+        System
+        libc
+        "-framework Foundation"
+        "-framework AVFoundation"
+        "-framework CoreMedia"
+        "-framework CoreGraphics"
+        "-framework UIKit"
+        "-framework CoreAudio"
+        "-framework CoreFoundation"
+    )
+
+    # 链接 libvpx.framework
+    target_link_libraries(ok-rtc PRIVATE
+        "-F${third_party_loc}/libvpx" # 设置框架搜索路径
+        "-framework libvpx" # 链接 libvpx.framework
+    )
+
+    # 设置平台特定标志
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+else()
+    link_openssl(ok-rtc)
+    link_ffmpeg(ok-rtc)
+    link_opus(ok-rtc)
+    link_libopenh264(ok-rtc)
+    link_libvpx(ok-rtc)
+    link_crc32c(ok-rtc)
+    link_dl(ok-rtc)
+endif()
+
 link_libsrtp(ok-rtc)
-link_libvpx(ok-rtc)
-link_crc32c(ok-rtc)
-link_dl(ok-rtc)
+link_libabsl(ok-rtc)
 
 if (OK_RTC_BUILD_AUDIO_BACKENDS AND (UNIX AND NOT APPLE))
     link_libalsa(ok-rtc)
@@ -2624,7 +2691,221 @@ if (is_x86 OR is_x64)
     )
 endif()
 if (APPLE)
-    list(APPEND export_targets libsdkmacos)
+    if(IOS)
+        file(GLOB desktop_capture_sources modules/desktop_capture/*)
+        remove_target_sources(ok-rtc ${webrtc_loc}
+
+            # screen drawer
+            modules/desktop_capture/screen_drawer.cc
+            modules/desktop_capture/screen_drawer.h
+            modules/desktop_capture/screen_drawer_mac.cc
+            modules/desktop_capture/screen_drawer_linux.cc
+            modules/desktop_capture/screen_drawer_lock_posix.cc
+            modules/desktop_capture/screen_drawer_lock_posix.h
+            modules/desktop_capture/screen_drawer_win.cc
+
+            # primitives
+            modules/desktop_capture/delegated_source_list_controller.h
+            modules/desktop_capture/desktop_capture_metadata.h
+            modules/desktop_capture/desktop_capture_types.h
+            modules/desktop_capture/desktop_frame.cc
+            modules/desktop_capture/desktop_frame.h
+            modules/desktop_capture/desktop_geometry.cc
+            modules/desktop_capture/desktop_geometry.h
+            modules/desktop_capture/desktop_region.cc
+            modules/desktop_capture/desktop_region.h
+            modules/desktop_capture/shared_desktop_frame.cc
+            modules/desktop_capture/shared_desktop_frame.h
+            modules/desktop_capture/shared_memory.cc
+            modules/desktop_capture/shared_memory.h
+
+            # generic
+            modules/desktop_capture/blank_detector_desktop_capturer_wrapper.cc
+            modules/desktop_capture/blank_detector_desktop_capturer_wrapper.h
+            modules/desktop_capture/cropped_desktop_frame.cc
+            modules/desktop_capture/cropped_desktop_frame.h
+            modules/desktop_capture/cropping_window_capturer.cc
+            modules/desktop_capture/cropping_window_capturer.h
+            modules/desktop_capture/cropping_window_capturer_win.cc
+            modules/desktop_capture/desktop_and_cursor_composer.cc
+            modules/desktop_capture/desktop_and_cursor_composer.h
+            modules/desktop_capture/desktop_capture_metrics_helper.cc
+            modules/desktop_capture/desktop_capture_metrics_helper.h
+            modules/desktop_capture/desktop_capture_options.cc
+            modules/desktop_capture/desktop_capture_options.h
+            modules/desktop_capture/desktop_capturer.cc
+            modules/desktop_capture/desktop_capturer.h
+            modules/desktop_capture/desktop_capturer_differ_wrapper.cc
+            modules/desktop_capture/desktop_capturer_differ_wrapper.h
+            modules/desktop_capture/desktop_capturer_wrapper.cc
+            modules/desktop_capture/desktop_capturer_wrapper.h
+            modules/desktop_capture/desktop_frame_generator.cc
+            modules/desktop_capture/desktop_frame_generator.h
+            modules/desktop_capture/desktop_frame_rotation.cc
+            modules/desktop_capture/desktop_frame_rotation.h
+            modules/desktop_capture/desktop_frame_win.cc
+            modules/desktop_capture/desktop_frame_win.h
+            modules/desktop_capture/differ_block.cc
+            modules/desktop_capture/differ_block.h
+            modules/desktop_capture/fake_desktop_capturer.cc
+            modules/desktop_capture/fake_desktop_capturer.h
+            modules/desktop_capture/fallback_desktop_capturer_wrapper.cc
+            modules/desktop_capture/fallback_desktop_capturer_wrapper.h
+            modules/desktop_capture/full_screen_application_handler.cc
+            modules/desktop_capture/full_screen_application_handler.h
+            modules/desktop_capture/full_screen_window_detector.cc
+            modules/desktop_capture/full_screen_window_detector.h
+            modules/desktop_capture/mouse_cursor.cc
+            modules/desktop_capture/mouse_cursor.h
+            modules/desktop_capture/mouse_cursor_monitor.h
+            modules/desktop_capture/mouse_cursor_monitor_linux.cc
+            modules/desktop_capture/mouse_cursor_monitor_mac.mm
+            modules/desktop_capture/mouse_cursor_monitor_win.cc
+            modules/desktop_capture/resolution_tracker.cc
+            modules/desktop_capture/resolution_tracker.h
+            modules/desktop_capture/rgba_color.cc
+            modules/desktop_capture/rgba_color.h
+            modules/desktop_capture/screen_capture_frame_queue.h
+            modules/desktop_capture/screen_capturer_helper.cc
+            modules/desktop_capture/screen_capturer_helper.h
+            modules/desktop_capture/screen_capturer_darwin.mm
+            modules/desktop_capture/screen_capturer_linux.cc
+            modules/desktop_capture/screen_capturer_win.cc
+            modules/desktop_capture/window_capturer_linux.cc
+            modules/desktop_capture/window_capturer_mac.mm
+            modules/desktop_capture/window_capturer_win.cc
+            modules/desktop_capture/window_finder.cc
+            modules/desktop_capture/window_finder.h
+            modules/desktop_capture/window_finder_mac.h
+            modules/desktop_capture/window_finder_mac.mm
+            modules/desktop_capture/window_finder_win.cc
+            modules/desktop_capture/window_finder_win.h
+
+            # stubs for non-supported
+            modules/desktop_capture/mouse_cursor_monitor_null.cc
+            modules/desktop_capture/screen_capturer_null.cc
+            modules/desktop_capture/window_capturer_null.cc
+
+            # linux specific
+            modules/desktop_capture/linux/wayland/base_capturer_pipewire.cc
+            modules/desktop_capture/linux/wayland/base_capturer_pipewire.h
+            modules/desktop_capture/linux/wayland/egl_dmabuf.cc
+            modules/desktop_capture/linux/wayland/egl_dmabuf.h
+            modules/desktop_capture/linux/wayland/mouse_cursor_monitor_pipewire.cc
+            modules/desktop_capture/linux/wayland/mouse_cursor_monitor_pipewire.h
+            modules/desktop_capture/linux/wayland/portal_request_response.h
+            modules/desktop_capture/linux/wayland/restore_token_manager.cc
+            modules/desktop_capture/linux/wayland/restore_token_manager.h
+            modules/desktop_capture/linux/wayland/screen_capture_portal_interface.cc
+            modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h
+            modules/desktop_capture/linux/wayland/screencast_portal.cc
+            modules/desktop_capture/linux/wayland/screencast_portal.h
+            modules/desktop_capture/linux/wayland/screencast_stream_utils.cc
+            modules/desktop_capture/linux/wayland/screencast_stream_utils.h
+            modules/desktop_capture/linux/wayland/shared_screencast_stream.cc
+            modules/desktop_capture/linux/wayland/shared_screencast_stream.h
+            modules/desktop_capture/linux/wayland/xdg_session_details.h
+            modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.cc
+            modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.h
+            modules/desktop_capture/linux/x11/screen_capturer_x11.cc
+            modules/desktop_capture/linux/x11/screen_capturer_x11.h
+            modules/desktop_capture/linux/x11/shared_x_display.cc
+            modules/desktop_capture/linux/x11/shared_x_display.h
+            modules/desktop_capture/linux/x11/window_capturer_x11.cc
+            modules/desktop_capture/linux/x11/window_capturer_x11.h
+            modules/desktop_capture/linux/x11/window_finder_x11.cc
+            modules/desktop_capture/linux/x11/window_finder_x11.h
+            modules/desktop_capture/linux/x11/window_list_utils.cc
+            modules/desktop_capture/linux/x11/window_list_utils.h
+            modules/desktop_capture/linux/x11/x_atom_cache.cc
+            modules/desktop_capture/linux/x11/x_atom_cache.h
+            modules/desktop_capture/linux/x11/x_error_trap.cc
+            modules/desktop_capture/linux/x11/x_error_trap.h
+            modules/desktop_capture/linux/x11/x_server_pixel_buffer.cc
+            modules/desktop_capture/linux/x11/x_server_pixel_buffer.h
+            modules/desktop_capture/linux/x11/x_window_property.cc
+            modules/desktop_capture/linux/x11/x_window_property.h
+            modules/desktop_capture/mac/desktop_configuration.mm
+            modules/desktop_capture/mac/desktop_frame_cgimage.h
+            modules/desktop_capture/mac/desktop_frame_cgimage.mm
+            modules/desktop_capture/mac/desktop_frame_iosurface.h
+            modules/desktop_capture/mac/desktop_frame_iosurface.mm
+            modules/desktop_capture/mac/desktop_frame_provider.h
+            modules/desktop_capture/mac/desktop_frame_provider.mm
+            modules/desktop_capture/mac/desktop_frame_utils.cc
+            modules/desktop_capture/mac/desktop_frame_utils.h
+            modules/desktop_capture/mac/screen_capturer_mac.h
+            modules/desktop_capture/mac/screen_capturer_mac.mm
+
+            modules/desktop_capture/mac/desktop_configuration.h
+            modules/desktop_capture/mac/desktop_configuration_monitor.cc
+            modules/desktop_capture/mac/desktop_configuration_monitor.h
+            modules/desktop_capture/mac/full_screen_mac_application_handler.cc
+            modules/desktop_capture/mac/full_screen_mac_application_handler.h
+            modules/desktop_capture/mac/window_list_utils.cc
+            modules/desktop_capture/mac/window_list_utils.h
+
+            # win specific
+            modules/desktop_capture/win/cursor.cc
+            modules/desktop_capture/win/cursor.h
+            modules/desktop_capture/win/d3d_device.cc
+            modules/desktop_capture/win/d3d_device.h
+            modules/desktop_capture/win/desktop.cc
+            modules/desktop_capture/win/desktop.h
+            modules/desktop_capture/win/desktop_capture_utils.cc
+            modules/desktop_capture/win/desktop_capture_utils.h
+            modules/desktop_capture/win/display_configuration_monitor.cc
+            modules/desktop_capture/win/display_configuration_monitor.h
+            modules/desktop_capture/win/dxgi_adapter_duplicator.cc
+            modules/desktop_capture/win/dxgi_adapter_duplicator.h
+            modules/desktop_capture/win/dxgi_context.cc
+            modules/desktop_capture/win/dxgi_context.h
+            modules/desktop_capture/win/dxgi_duplicator_controller.cc
+            modules/desktop_capture/win/dxgi_duplicator_controller.h
+            modules/desktop_capture/win/dxgi_frame.cc
+            modules/desktop_capture/win/dxgi_frame.h
+            modules/desktop_capture/win/dxgi_output_duplicator.cc
+            modules/desktop_capture/win/dxgi_output_duplicator.h
+            modules/desktop_capture/win/dxgi_texture.cc
+            modules/desktop_capture/win/dxgi_texture.h
+            modules/desktop_capture/win/dxgi_texture_mapping.cc
+            modules/desktop_capture/win/dxgi_texture_mapping.h
+            modules/desktop_capture/win/dxgi_texture_staging.cc
+            modules/desktop_capture/win/dxgi_texture_staging.h
+            modules/desktop_capture/win/full_screen_win_application_handler.cc
+            modules/desktop_capture/win/full_screen_win_application_handler.h
+            modules/desktop_capture/win/scoped_gdi_object.h
+            modules/desktop_capture/win/scoped_thread_desktop.cc
+            modules/desktop_capture/win/scoped_thread_desktop.h
+            modules/desktop_capture/win/screen_capture_utils.cc
+            modules/desktop_capture/win/screen_capture_utils.h
+            modules/desktop_capture/win/screen_capturer_win_directx.cc
+            modules/desktop_capture/win/screen_capturer_win_directx.h
+            modules/desktop_capture/win/screen_capturer_win_gdi.cc
+            modules/desktop_capture/win/screen_capturer_win_gdi.h
+            modules/desktop_capture/win/screen_capturer_win_magnifier.cc
+            modules/desktop_capture/win/screen_capturer_win_magnifier.h
+            modules/desktop_capture/win/selected_window_context.cc
+            modules/desktop_capture/win/selected_window_context.h
+            modules/desktop_capture/win/wgc_capture_session.cc
+            modules/desktop_capture/win/wgc_capture_session.h
+            modules/desktop_capture/win/wgc_capture_source.cc
+            modules/desktop_capture/win/wgc_capture_source.h
+            modules/desktop_capture/win/wgc_capturer_win.cc
+            modules/desktop_capture/win/wgc_capturer_win.h
+            modules/desktop_capture/win/wgc_desktop_frame.cc
+            modules/desktop_capture/win/wgc_desktop_frame.h
+            modules/desktop_capture/win/window_capture_utils.cc
+            modules/desktop_capture/win/window_capture_utils.h
+            modules/desktop_capture/win/window_capturer_win_gdi.cc
+            modules/desktop_capture/win/window_capturer_win_gdi.h
+        )
+    else()
+        list(APPEND export_targets libsdkmacos)
+    endif()
+    
+
+    
 endif()
 list(APPEND export_targets
     libwebrtcbuild
@@ -2643,7 +2924,10 @@ else()
     target_compile_definitions(ok-rtc PRIVATE WEBRTC_EXTERNAL_SRTP)
 endif()
 if (NOT Crc32c_FOUND)
-    include(cmake/libcrc32c.cmake)
+    if(NOT IOS)
+        include(cmake/libcrc32c.cmake) 
+    endif()
+    
     list(APPEND export_targets libcrc32c)
 endif()
 

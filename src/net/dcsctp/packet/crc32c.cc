@@ -10,7 +10,11 @@
 #include "net/dcsctp/packet/crc32c.h"
 
 #include <cstdint>
+#if defined(WEBRTC_IOS)
+#include "crc32c/crc32c.h"
+#else
 #include <crc32c/crc32c.h>
+#endif
 
 namespace dcsctp {
 

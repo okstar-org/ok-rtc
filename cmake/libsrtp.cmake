@@ -2,7 +2,23 @@ add_library(libsrtp OBJECT EXCLUDE_FROM_ALL)
 init_target(libsrtp)
 add_library(ok-rtc::libsrtp ALIAS libsrtp)
 
-link_openssl(libsrtp)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    # 设置头文件路径
+    target_include_directories(ok-rtc PRIVATE
+        ${CMAKE_SOURCE_DIR}/third_party/openssl/arm64/include
+    )
+
+    # 设置库文件路径
+    target_link_directories(ok-rtc PRIVATE
+        ${CMAKE_SOURCE_DIR}/third_party/openssl/lib
+    )
+    target_link_libraries(ok-rtc PRIVATE
+        ssl
+        crypto
+    )
+else()
+    link_libsrtp(ok-rtc)
+endif()
 
 set(libsrtp_loc ${third_party_loc}/libsrtp)
 
@@ -29,6 +45,13 @@ PRIVATE
 
 target_compile_definitions(libsrtp PRIVATE HAVE_CONFIG_H)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    target_include_directories(libsrtp
+    PRIVATE
+        ${third_party_loc}/openssl/arm64/include
+    )
+else()
+endif()
 target_include_directories(libsrtp
 PUBLIC
     $<BUILD_INTERFACE:${libsrtp_loc}/include>

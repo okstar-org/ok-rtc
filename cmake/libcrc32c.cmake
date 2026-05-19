@@ -8,7 +8,7 @@ configure_file(
     ${libcrc32c_loc}/src/crc32c_config.h.in
     ${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h
 )
-
+message(STATUS "lym ${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h")
 nice_target_sources(libcrc32c ${libcrc32c_loc}
 PRIVATE
     src/crc32c_portable.cc
@@ -26,10 +26,24 @@ PRIVATE
 
 target_sources(libcrc32c PRIVATE ${PROJECT_BINARY_DIR}/include/crc32c/crc32c_config.h)
 
-target_include_directories(libcrc32c
-PRIVATE
-    ${PROJECT_BINARY_DIR}/include
-PUBLIC
-    $<BUILD_INTERFACE:${libcrc32c_loc}/include>
-    $<INSTALL_INTERFACE:${webrtc_includedir}/third_party/crc32c/src/include>
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    add_definitions(-DWEBRTC_IOS)
+    target_include_directories(libcrc32c
+        PRIVATE
+        ${CMAKE_HOME_DIRECTORY}/src/net/dcsctp/packet
+        ${PROJECT_BINARY_DIR}/include/
+        PUBLIC
+        $<BUILD_INTERFACE:${libcrc32c_loc}/include>
+        $<INSTALL_INTERFACE:${webrtc_includedir}/third_party/crc32c/src/include>
+    )
+else()
+    target_include_directories(libcrc32c
+        PRIVATE
+        ${PROJECT_BINARY_DIR}/include
+        PUBLIC
+        $<BUILD_INTERFACE:${libcrc32c_loc}/include>
+        $<INSTALL_INTERFACE:${webrtc_includedir}/third_party/crc32c/src/include>
+    )
+endif()
+
+
