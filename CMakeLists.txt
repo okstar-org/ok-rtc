@@ -32,6 +32,9 @@ if (BUILD_SHARED_LIBS)
         "The feature of building ok-rtc as a shared library is community maintained, it may and will break at any time without guarantee to work again."
         "Please reconsider your decision. Good luck."
     )
+else()
+    # Always enable PIC since this static library is linked into shared libraries
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if (OK_RTC_BUILD_AUDIO_BACKENDS)
@@ -75,6 +78,7 @@ include(cmake/generate_field_trials.cmake)
 include(cmake/external.cmake)
 include(cmake/libpffft.cmake)
 include(cmake/librnnoise.cmake)
+include(cmake/libjpeg.cmake)
 include(cmake/libyuv.cmake)
 if (APPLE)
     include(cmake/libsdkmacos.cmake)
@@ -2632,6 +2636,9 @@ list(APPEND export_targets
     librnnoise
     libyuv
 )
+# libyuv links jpeg-static (in-tree libjpeg-turbo, see cmake/libjpeg.cmake);
+# it must be part of the export set for export()/install(EXPORT) to succeed.
+list(APPEND export_targets jpeg-static)
 if (NOT absl_FOUND)
     include(cmake/libabsl.cmake)
     list(APPEND export_targets libabsl)

@@ -83,7 +83,11 @@ endfunction()
 # libjpeg
 set(OK_RTC_LIBJPEG_INCLUDE_PATH "" CACHE STRING "Include path for libjpeg.")
 function(link_libjpeg target_name)
-    if (OK_RTC_PACKAGED_BUILD)
+    # Prefer the in-tree libjpeg-turbo built from the submodule (ok-rtc::libjpeg).
+    # Fall back to find_package when ok-rtc is consumed as a prebuilt package.
+    if (TARGET ok-rtc::libjpeg)
+        target_link_libraries(${target_name} PRIVATE ok-rtc::libjpeg)
+    elseif (OK_RTC_PACKAGED_BUILD)
         find_package(JPEG REQUIRED)
         target_include_directories(${target_name} SYSTEM PRIVATE ${JPEG_INCLUDE_DIRS})
         target_link_libraries(${target_name} PRIVATE ${JPEG_LIBRARIES})

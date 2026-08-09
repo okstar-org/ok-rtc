@@ -6,7 +6,6 @@
       "default-features": false,
       "features": ["avcodec", "avdevice", "avfilter", "avformat", "swresample", "swscale"]
     },
-    "libjpeg-turbo",
     "openh264",
     "opus",
     "libvpx",
