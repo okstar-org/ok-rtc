@@ -21,6 +21,13 @@ add_subdirectory(${libjpeg_loc} ${libjpeg_binary_dir} EXCLUDE_FROM_ALL)
 
 add_library(ok-rtc::libjpeg ALIAS jpeg-static)
 
+# libjpeg-turbo 是 v6b API（见上面 WITH_JPEG7/WITH_JPEG8 OFF 的注释）。若它的
+# jpeg_* 符号被导出到进程全局符号表，会与 Qt6 libqjpeg.so 链接的系统 libjpeg.so.8
+# （v8）发生符号插桩冲突——两者 jpeg_decompress_struct 布局不同，Qt 一解码 JPEG
+# （QImage::fromData）就段错误。隐藏符号后它们只对 libOkRTC.so 内部（libyuv）可见，
+# 不再泄漏到全局。同 DSO 内的引用不受影响。
+set_target_properties(jpeg-static PROPERTIES C_VISIBILITY_PRESET hidden)
+
 # jpeg-static does not expose any include directories by itself, so add them
 # here:
 #   ${libjpeg_loc}/src      - jpeglib.h / jmorecfg.h / jerror.h
